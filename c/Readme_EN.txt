@@ -13,7 +13,7 @@ This file is to help you use this routine.
 1. Basic information:
 This routine is based on the raspberry PI 4B+ development, the kernel version:
 	Linux raspberrypi 5.4.51-v7l+ #1333 SMP Mon Aug 10 16:51:40 BST 2020 armv7l GNU/Linux
-You can view the detailed test routine in the project's main.py
+You can view the detailed test routine in the project's  examples/main.c 
 
 2. Pin connection:
 Pin connections can be viewed in lib/Config/DEV_Config.c(h), which is repeated here:
@@ -30,11 +30,20 @@ SPI:
 	AVDD   ->    5V or 2.5V
 	AVSS   ->    GND or -2.5V
 
-3. Basic use:
+3. Install libraries:
+Install BCM2835:
+	wget http://www.airspayce.com/mikem/bcm2835/bcm2835-1.68.tar.gz
+	tar zxvf bcm2835-1.68.tar.gz 
+	cd bcm2835-1.68/
+	sudo ./configure && sudo make && sudo make check && sudo make install
+
+4. Basic use:
 The factory hardware default COM has been connected to GND
 The program has configured IN0 and IN1 two analog output
 At this time you can draw IN0 or IN1 and GND to measure the target voltage
 Input:
-	sudo make clean
-	sudo make
-	sudo ./main
+	sudo python main.py
+or
+	sudo python3 main.py
+	
+For more information, please visit the official Wiki of Waveshare:https://www.waveshare.net/wiki/High-Precision_AD_HAT

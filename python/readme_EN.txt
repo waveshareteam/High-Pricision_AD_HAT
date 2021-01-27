@@ -53,4 +53,5 @@ Input:
 	sudo python main.py
 or
 	sudo python3 main.py
-    
+
+For more information, please visit the official Wiki of Waveshare:https://www.waveshare.net/wiki/High-Precision_AD_HAT   
