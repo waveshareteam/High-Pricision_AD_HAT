@@ -13,6 +13,8 @@ This file is to help you use this routine.
 1. Basic information:
 This routine is based on the raspberry PI 4B+ development, the kernel version:
 	Linux raspberrypi 5.4.51-v7l+ #1333 SMP Mon Aug 10 16:51:40 BST 2020 armv7l GNU/Linux
+		&
+	Linux jetson-desktop 4.9.140-tegra #1 SMP PREEMPT Tue Oct 27 21:02:37 PDT 2020 aarch64 aarch64 aarch64 GNU/Linux
 You can view the detailed test routine in the project's  examples/main.c 
 
 2. Pin connection:
@@ -41,9 +43,15 @@ Install BCM2835:
 The factory hardware default COM has been connected to GND
 The program has configured IN0 and IN1 two analog output
 At this time you can draw IN0 or IN1 and GND to measure the target voltage
-Input:
-	sudo python main.py
-or
-	sudo python3 main.py
+
+RPI:
+	sudo make clean
+	sudo make
+	sudo ./main
+	
+JETSON:
+	sudo make clean
+	sudo make
+	sudo ./main
 	
 For more information, please visit the official Wiki of Waveshare:https://www.waveshare.net/wiki/High-Precision_AD_HAT

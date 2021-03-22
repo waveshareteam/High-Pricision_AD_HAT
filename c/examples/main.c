@@ -50,7 +50,7 @@ int main(void)
 				else
 					printf("IN%d is %lf \r\n", i, ADC[i]/2147483647.0 * REF);		//7fffffff
 			}
-			DEV_Delay_ms(200);
+			// DEV_Delay_ms(200);
 			
 			/*ADC 2*/
 			// ADS1263_GetAll_ADC2(ADC);	// Get ADC2 value
@@ -69,7 +69,7 @@ int main(void)
 			printf("Res is %lf \r\n", RES);
 			TEMP = (RES/100.0 - 1.0) / 0.00385;		//0.00385 -- pt100
 			printf("Temp is %lf \r\n", TEMP);
-			DEV_Delay_ms(200);
+			// DEV_Delay_ms(200);
 			
 			printf("\33[2A");//Move the cursor up 2 lines
 		}

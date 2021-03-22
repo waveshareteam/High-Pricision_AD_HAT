@@ -247,9 +247,9 @@ void DEV_GPIO_Init(void)
 	DEV_CS_PIN      = 22;
 	DEV_DRDY_PIN    = 17;
 #elif JETSON
-	DEV_RST_PIN     = GPIO17;
-	DEV_CS_PIN      = GPIO25;
-	DEV_DRDY_PIN    = SPI0_CS0;
+	DEV_RST_PIN     = GPIO18;
+	DEV_CS_PIN      = GPIO22;
+	DEV_DRDY_PIN    = GPIO17;
 #endif
 
 	DEV_GPIO_Mode(DEV_RST_PIN, 1);
@@ -304,10 +304,9 @@ UBYTE DEV_Module_Init(void)
 	printf("Write and read /dev/spidev0.0 \r\n");
 	DEV_GPIO_Init();
 	DEV_HARDWARE_SPI_begin("/dev/spidev0.0");
-    DEV_HARDWARE_SPI_setSpeed(10000000);
+    DEV_HARDWARE_SPI_setSpeed(1000000);
 	DEV_HARDWARE_SPI_Mode(SPI_MODE_1);
 #endif
-
 
 
 #elif JETSON
@@ -316,8 +315,8 @@ UBYTE DEV_Module_Init(void)
 	printf("Software spi\r\n");
 	SYSFS_software_spi_begin();
 	SYSFS_software_spi_setBitOrder(SOFTWARE_SPI_MSBFIRST);
-	SYSFS_software_spi_setDataMode(SOFTWARE_SPI_Mode0);
-	SYSFS_software_spi_setClockDivider(SOFTWARE_SPI_CLOCK_DIV4);
+	SYSFS_software_spi_setDataMode(SOFTWARE_SPI_Mode1);
+	SYSFS_software_spi_setClockDivider(SOFTWARE_SPI_CLOCK_DIV16);
 #elif USE_HARDWARE_LIB
 	printf("Write and read /dev/spidev0.0 \r\n");
 	DEV_GPIO_Init();
