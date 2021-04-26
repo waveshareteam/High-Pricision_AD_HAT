@@ -1,5 +1,5 @@
 /*****************************************************************************
-* | File      	:   Readme_CN.txt
+* | File      	:   Readme_EN.txt
 * | Author      :   Waveshare team
 * | Function    :   Help with use
 * | Info        :
@@ -13,12 +13,10 @@ This file is to help you use this routine.
 1. Basic information:
 This routine is based on the raspberry PI 4B+ development, the kernel version:
 	Linux raspberrypi 5.4.51-v7l+ #1333 SMP Mon Aug 10 16:51:40 BST 2020 armv7l GNU/Linux
-		&
-	Linux jetson-desktop 4.9.140-tegra #1 SMP PREEMPT Tue Oct 27 21:02:37 PDT 2020 aarch64 aarch64 aarch64 GNU/Linux
-You can view the detailed test routine in the project's  examples/main.c 
+You can view the detailed test routine in the project's main.py
 
 2. Pin connection:
-Pin connections can be viewed in lib/Config/DEV_Config.c(h), which is repeated here:
+Pin connections can be viewed in config.py, which is repeated here:
 SPI:
 	AD HAT =>    RPI(BCM)
 	VCC    ->    Without direct connection, other devices can be directly connected to 3.3V
@@ -32,26 +30,28 @@ SPI:
 	AVDD   ->    5V or 2.5V
 	AVSS   ->    GND or -2.5V
 
-3. Install libraries:
-Install BCM2835:
-	wget http://www.airspayce.com/mikem/bcm2835/bcm2835-1.68.tar.gz
-	tar zxvf bcm2835-1.68.tar.gz 
-	cd bcm2835-1.68/
-	sudo ./configure && sudo make && sudo make check && sudo make install
+3.Installation library
+    sudo apt-get update
+    sudo apt-get install python-pip
+    sudo apt-get install python-pil
+    sudo apt-get install python-numpy
+    sudo pip install RPi.GPIO
+
+or
+
+    sudo apt-get update
+    sudo apt-get install python3-pip
+    sudo apt-get install python3-pil
+    sudo apt-get install python3-numpy
+    sudo pip3 install RPi.GPIO
 
 4. Basic use:
 The factory hardware default COM has been connected to GND
 The program has configured IN0 and IN1 two analog output
 At this time you can draw IN0 or IN1 and GND to measure the target voltage
+Input:
+	sudo python main.py
+or
+	sudo python3 main.py
 
-RPI:
-	sudo make clean
-	sudo make
-	sudo ./main
-	
-JETSON:
-	sudo make clean
-	sudo make
-	sudo ./main
-	
-For more information, please visit the official Wiki of Waveshare:https://www.waveshare.net/wiki/High-Precision_AD_HAT
+For more information, please visit the official Wiki of Waveshare:https://www.waveshare.net/wiki/High-Precision_AD_HAT   

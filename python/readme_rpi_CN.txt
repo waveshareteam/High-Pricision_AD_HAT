@@ -51,3 +51,5 @@ SPI:
 	sudo python main.py
 或
 	sudo python3 main.py
+
+更多资料请前往微雪电子官方Wiki查看：https://www.waveshare.net/wiki/High-Precision_AD_HAT

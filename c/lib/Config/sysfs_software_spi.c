@@ -136,7 +136,7 @@ void SYSFS_software_spi_setClockDivider(uint8_t div)
 }
 
 /******************************************************************************
-function:	SPI Mode 0
+function:	SPI 
 parameter:
 Info:
 ******************************************************************************/
@@ -162,43 +162,27 @@ uint8_t SYSFS_software_spi_transfer(uint8_t value)
 
     // printf("value = %d\r\n", value);
     uint8_t Read_miso = 0;
-    
-    SYSFS_GPIO_Write(software_spi.SCLK_PIN, 0);
-    for (uint8_t bit = 0; bit < 8; bit++) {        
-        SYSFS_GPIO_Write(software_spi.SCLK_PIN, 0);
-        // for(int j=delay; j > 0; j--);// DELAY
 
-        if (software_spi.CPHA) {
-            Read_miso = SYSFS_GPIO_Read(software_spi.MISO_PIN);
-            if (software_spi.Order == SOFTWARE_SPI_LSBFIRST) {
+	if(software_spi.Mode == 1)
+	{
+		SYSFS_GPIO_Write(software_spi.SCLK_PIN, 0);
+		for(int j=delay; j > 0; j--);// DELAY
+
+		for (uint8_t bit = 0; bit < 8; bit++) {
+			SYSFS_GPIO_Write(software_spi.SCLK_PIN, 1);
+			for(int j=delay; j > 0; j--);// DELAY
+
+			SYSFS_GPIO_Write(software_spi.MOSI_PIN, ((value<<bit) & 0x80) ? HIGH : LOW);
+
+			Read_miso = SYSFS_GPIO_Read(software_spi.MISO_PIN);
                 Read_data <<= 1;
                 Read_data |= Read_miso;
-            } else {
-                Read_data >>= 1;
-                Read_data |= Read_miso << 7;
-            }
-        } else {
-            SYSFS_GPIO_Write(software_spi.MOSI_PIN, ((value<<bit) & 0x80) ? HIGH : LOW);
-        }
 
-        // for(int j=delay; j > 0; j--);// DELAY
-        SYSFS_GPIO_Write(software_spi.SCLK_PIN, 1);
-        // for(int j=delay; j > 0; j--);// DELAY
-
-        if (software_spi.CPHA) {
-            SYSFS_GPIO_Write(software_spi.MOSI_PIN, ((value<<bit) & 0x80) ? HIGH : LOW);
-        } else {
-            Read_miso = SYSFS_GPIO_Read(software_spi.MISO_PIN);
-            if (software_spi.Order == SOFTWARE_SPI_LSBFIRST) {
-                Read_data <<= 1;
-                Read_data |= Read_miso;
-            } else {
-                Read_data >>= 1;
-                Read_data |= Read_miso << 7;
-            }
-        }
-
-        // for(int j=delay; j > 0; j--);// DELAY
-    }
-    return Read_data;
+			for(int j=delay; j > 0; j--);// DELAY
+			SYSFS_GPIO_Write(software_spi.SCLK_PIN, 0);
+			for(int j=delay; j > 0; j--);// DELAY
+			
+		}
+		return Read_data;
+	}
 }

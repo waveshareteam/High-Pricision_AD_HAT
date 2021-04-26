@@ -88,7 +88,7 @@ static UBYTE ADS1263_Read_data(UBYTE Reg)
     DEV_Digital_Write(DEV_CS_PIN, 0);
     DEV_SPI_WriteByte(CMD_RREG | Reg);
     DEV_SPI_WriteByte(0x00);
-    DEV_Delay_ms(1);
+    // DEV_Delay_ms(1);
     temp = DEV_SPI_ReadByte();
     DEV_Digital_Write(DEV_CS_PIN, 1);
     return temp;
@@ -126,7 +126,7 @@ static void ADS1263_WaitDRDY(void)
 	// printf("ADS1263_WaitDRDY \r\n");
     UDOUBLE i = 0;
     for(i=0;i<4000000;i++) {
-		DEV_Delay_ms(1);
+		// DEV_Delay_ms(1);
         if(DEV_Digital_Read(DEV_DRDY_PIN) == 0)
             break;
     }
@@ -171,7 +171,7 @@ parameter:
     drate: Enumeration type sampling speed
 Info:
 ******************************************************************************/
-void ADS1263_ConfigADC1(ADS1263_GAIN gain, ADS1263_DRATE drate)
+void ADS1263_ConfigADC1(ADS1263_GAIN gain, ADS1263_DRATE drate, ADS1263_DELAY delay)
 {
 	UBYTE MODE2 = 0x80;				//0x80:PGA bypassed, 0x00:PGA enabled
 	MODE2 |= (gain << 4) | drate;
@@ -190,7 +190,7 @@ void ADS1263_ConfigADC1(ADS1263_GAIN gain, ADS1263_DRATE drate)
 	else
 		printf("REG_REFMUX unsuccess \r\n");
 	
-	UBYTE MODE0 = ADS1263_DELAY_8d8ms;
+	UBYTE MODE0 = delay;
 	ADS1263_WriteReg(REG_MODE0, MODE0);	
 	DEV_Delay_ms(1);
 	if(ADS1263_Read_data(REG_MODE0) == MODE0)
@@ -206,7 +206,7 @@ parameter:
     drate: Enumeration type sampling speed
 Info:
 ******************************************************************************/
-void ADS1263_ConfigADC2(ADS1263_ADC2_GAIN gain, ADS1263_ADC2_DRATE drate)
+void ADS1263_ConfigADC2(ADS1263_ADC2_GAIN gain, ADS1263_ADC2_DRATE drate, ADS1263_DELAY delay)
 {
 	UBYTE ADC2CFG = 0x20;				//REF, 0x20:VAVDD and VAVSS, 0x00:+-2.5V
 	ADC2CFG |= (drate << 6) | gain;
@@ -217,7 +217,7 @@ void ADS1263_ConfigADC2(ADS1263_ADC2_GAIN gain, ADS1263_ADC2_DRATE drate)
 	else
 		printf("REG_ADC2CFG unsuccess \r\n");
 	
-	UBYTE MODE0 = ADS1263_DELAY_8d8ms;
+	UBYTE MODE0 = delay;
 	ADS1263_WriteReg(REG_MODE0, MODE0);	
 	DEV_Delay_ms(1);
 	if(ADS1263_Read_data(REG_MODE0) == MODE0)
@@ -244,8 +244,8 @@ UBYTE ADS1263_init(void)
 	ADS1263_WriteCmd(CMD_STOP1);
 	ADS1263_WriteCmd(CMD_STOP2);
 
-	ADS1263_ConfigADC1(ADS1263_GAIN_1, ADS1263_20SPS);
-	ADS1263_ConfigADC2(ADS1263_ADC2_GAIN_1, ADS1263_ADC2_10SPS);
+	ADS1263_ConfigADC1(ADS1263_GAIN_1, ADS1263_14400SPS, ADS1263_DELAY_35us);
+	ADS1263_ConfigADC2(ADS1263_ADC2_GAIN_1, ADS1263_ADC2_100SPS, ADS1263_DELAY_35us);
     return 0;
 }
 
@@ -358,7 +358,7 @@ static UDOUBLE ADS1263_Read_ADC1_Data(void)
     DEV_Digital_Write(DEV_CS_PIN, 0);
 	do {
 		DEV_SPI_WriteByte(CMD_RDATA1);
-		DEV_Delay_ms(10);
+		// DEV_Delay_ms(10);
 		Status = DEV_SPI_ReadByte();
 	}while((Status & 0x40) == 0);
 	
@@ -392,7 +392,7 @@ static UDOUBLE ADS1263_Read_ADC2_Data(void)
     DEV_Digital_Write(DEV_CS_PIN, 0);
 	do {
 		DEV_SPI_WriteByte(CMD_RDATA2);
-		DEV_Delay_ms(10);
+		// DEV_Delay_ms(10);
 		Status = DEV_SPI_ReadByte();
 	}while((Status & 0x80) == 0);
 	
@@ -425,9 +425,9 @@ UDOUBLE ADS1263_GetChannalValue(UBYTE Channel)
             return 0;
         }
         ADS1263_SetChannal(Channel);
-		DEV_Delay_ms(2);
+		// DEV_Delay_ms(2);
         ADS1263_WriteCmd(CMD_START1);
-        DEV_Delay_ms(2);
+        // DEV_Delay_ms(2);
 		ADS1263_WaitDRDY();
         Value = ADS1263_Read_ADC1_Data();
     } else {
@@ -435,9 +435,9 @@ UDOUBLE ADS1263_GetChannalValue(UBYTE Channel)
             return 0;
         }
         ADS1263_SetDiffChannal(Channel);
-		DEV_Delay_ms(2);
+		// DEV_Delay_ms(2);
         ADS1263_WriteCmd(CMD_START1);
-        DEV_Delay_ms(2);
+        // DEV_Delay_ms(2);
 		ADS1263_WaitDRDY();
         Value = ADS1263_Read_ADC1_Data();
     }
@@ -459,18 +459,18 @@ UDOUBLE ADS1263_GetChannalValue_ADC2(UBYTE Channel)
             return 0;
         }
         ADS1263_SetChannal_ADC2(Channel);
-		DEV_Delay_ms(2);
+		// DEV_Delay_ms(2);
         ADS1263_WriteCmd(CMD_START2);
-        DEV_Delay_ms(2);
+        // DEV_Delay_ms(2);
         Value = ADS1263_Read_ADC2_Data();
     } else {
         if(Channel>4) {
             return 0;
         }
         ADS1263_SetDiffChannal_ADC2(Channel);
-		DEV_Delay_ms(2);
+		// DEV_Delay_ms(2);
         ADS1263_WriteCmd(CMD_START2);
-        DEV_Delay_ms(2);
+        // DEV_Delay_ms(2);
         Value = ADS1263_Read_ADC2_Data();
     }
 	// printf("Get IN%d value success \r\n", Channel);
@@ -489,7 +489,7 @@ void ADS1263_GetAll(UDOUBLE *ADC_Value)
     for(i = 0; i<10; i++) {
         ADC_Value[i] = ADS1263_GetChannalValue(i);
 		ADS1263_WriteCmd(CMD_STOP1);
-		DEV_Delay_ms(20);
+		// DEV_Delay_ms(20);
     }
 	printf("----------Read ADC1 value success----------\r\n");
 }
@@ -506,7 +506,7 @@ void ADS1263_GetAll_ADC2(UDOUBLE *ADC_Value)
     for(i = 0; i<10; i++) {
         ADC_Value[i] = ADS1263_GetChannalValue_ADC2(i);
 		ADS1263_WriteCmd(CMD_STOP2);
-		DEV_Delay_ms(20);
+		// DEV_Delay_ms(20);
     }
 	printf("----------Read ADC2 value success----------\r\n");
 }

@@ -253,7 +253,7 @@ class ADS1263:
         else:
             print("REG_REFMUX unsuccess")
             
-        MODE0 = ADS1263_DELAY['ADS1263_DELAY_8d8ms']
+        MODE0 = ADS1263_DELAY['ADS1263_DELAY_35us']
         self.ADS1263_WriteReg(ADS1263_REG['REG_MODE0'], MODE0)
         if(self.ADS1263_ReadData(ADS1263_REG['REG_MODE0'])[0] == MODE0):
             print("REG_MODE0 success")
@@ -271,7 +271,7 @@ class ADS1263:
         else:
             print("REG_ADC2CFG unsuccess")
             
-        MODE0 = ADS1263_DELAY['ADS1263_DELAY_8d8ms']
+        MODE0 = ADS1263_DELAY['ADS1263_DELAY_35us']
         self.ADS1263_WriteReg(ADS1263_REG['REG_MODE0'], MODE0)
         if(self.ADS1263_ReadData(ADS1263_REG['REG_MODE0'])[0] == MODE0):
             print("REG_MODE0 success")
@@ -356,8 +356,8 @@ class ADS1263:
             return -1
         self.ADS1263_WriteCmd(ADS1263_CMD['CMD_STOP1'])
         self.ADS1263_WriteCmd(ADS1263_CMD['CMD_STOP2'])
-        self.ADS1263_ConfigADC(ADS1263_GAIN['ADS1263_GAIN_1'], ADS1263_DRATE['ADS1263_20SPS'])
-        self.ADS1263_ConfigADC2(ADS1263_ADC2_GAIN['ADS1263_ADC2_GAIN_1'], ADS1263_ADC2_DRATE['ADS1263_ADC2_10SPS'])
+        self.ADS1263_ConfigADC(ADS1263_GAIN['ADS1263_GAIN_1'], ADS1263_DRATE['ADS1263_14400SPS'])
+        self.ADS1263_ConfigADC2(ADS1263_ADC2_GAIN['ADS1263_ADC2_GAIN_1'], ADS1263_ADC2_DRATE['ADS1263_ADC2_100SPS'])
         return 0
         
         
