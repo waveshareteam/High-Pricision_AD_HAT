@@ -182,8 +182,10 @@ typedef enum
 	CMD_WREG2	= 0x00,	// number of registers to write minus 1, 000n nnnn
 }ADS1263_CMD;
 
-UBYTE ADS1263_init(void);
+UBYTE ADS1263_init_ADC1(ADS1263_DRATE rate);
+UBYTE ADS1263_init_ADC2(ADS1263_ADC2_DRATE rate);
 void ADS1263_SetMode(UBYTE Mode);
+UDOUBLE ADS1263_GetChannalValue(UBYTE Channel);
 void ADS1263_GetAll(UDOUBLE *ADC_Value);
 void ADS1263_GetAll_ADC2(UDOUBLE *ADC_Value);
 UDOUBLE ADS1263_RTD(ADS1263_DELAY delay, ADS1263_GAIN gain, ADS1263_DRATE drate);

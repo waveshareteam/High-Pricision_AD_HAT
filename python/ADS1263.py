@@ -220,11 +220,14 @@ class ADS1263:
     
     # waiting for a busy end, just for ADC1
     def ADS1263_WaitDRDY(self):
-        for i in range(0,400000,1):
+        i = 0
+        while(1):
+            i+=1
             if(config.digital_read(self.drdy_pin) == 0):
                 break
-        if(i >= 400000):
-            print ("Time Out ...\r\n")
+            if(i >= 400000):
+                print ("Time Out ...\r\n")
+                break
         
     # Check chip ID, success is return 1
     def ADS1263_ReadChipID(self):
@@ -238,7 +241,7 @@ class ADS1263:
         
     #The configuration parameters of ADC, gain and data rate
     def ADS1263_ConfigADC(self, gain, drate):
-        MODE2 = 0x80
+        MODE2 = 0x80    # 0x80:PGA bypassed, 0x00:PGA enabled
         MODE2 |= (gain << 4) | drate
         self.ADS1263_WriteReg(ADS1263_REG['REG_MODE2'], MODE2)
         if(self.ADS1263_ReadData(ADS1263_REG['REG_MODE2'])[0] == MODE2):
@@ -246,7 +249,7 @@ class ADS1263:
         else:
             print("REG_MODE2 unsuccess")
 
-        REFMUX = 0x24
+        REFMUX = 0x24   # 0x00:+-2.5V as REF, 0x24:VDD,VSS as REF
         self.ADS1263_WriteReg(ADS1263_REG['REG_REFMUX'], REFMUX)
         if(self.ADS1263_ReadData(ADS1263_REG['REG_REFMUX'])[0] == REFMUX):
             print("REG_REFMUX success")
@@ -278,7 +281,7 @@ class ADS1263:
         else:
             print("REG_MODE0 unsuccess")
             
-    
+
     # Set ADC1 Measuring channel
     def ADS1263_SetChannal(self, Channal):
         if Channal > 10:
@@ -290,6 +293,7 @@ class ADS1263:
             pass
         else:
             print("REG_INPMUX unsuccess")
+
 
     # Set ADC2 Measuring channel
     def ADS1263_SetChannal_ADC2(self, Channal):
@@ -343,8 +347,9 @@ class ADS1263:
         else:
             print("REG_ADC2MUX unsuccess")
             
-    # Device initialization
-    def ADS1263_init(self):
+
+    # Device initialization (ADC1)
+    def ADS1263_init_ADC1(self, Rate1 = 'ADS1263_14400SPS'):
         if (config.module_init() != 0):
             return -1
         self.ADS1263_reset()
@@ -355,18 +360,33 @@ class ADS1263:
             print("ID Read failed   ")
             return -1
         self.ADS1263_WriteCmd(ADS1263_CMD['CMD_STOP1'])
-        self.ADS1263_WriteCmd(ADS1263_CMD['CMD_STOP2'])
-        self.ADS1263_ConfigADC(ADS1263_GAIN['ADS1263_GAIN_1'], ADS1263_DRATE['ADS1263_14400SPS'])
-        self.ADS1263_ConfigADC2(ADS1263_ADC2_GAIN['ADS1263_ADC2_GAIN_1'], ADS1263_ADC2_DRATE['ADS1263_ADC2_100SPS'])
+        self.ADS1263_ConfigADC(ADS1263_GAIN['ADS1263_GAIN_1'], ADS1263_DRATE[Rate1])
+        self.ADS1263_WriteCmd(ADS1263_CMD['CMD_START1'])
         return 0
         
+
+    # Device initialization (ADC2)
+    def ADS1263_init_ADC2(self, Rate2 = 'ADS1263_ADC2_100SPS'):
+        if (config.module_init() != 0):
+            return -1
+        self.ADS1263_reset()
+        id = self.ADS1263_ReadChipID()
+        if id == 0x01 :
+            print("ID Read success  ")
+        else:
+            print("ID Read failed   ")
+            return -1
+        self.ADS1263_WriteCmd(ADS1263_CMD['CMD_STOP2'])
+        self.ADS1263_ConfigADC2(ADS1263_ADC2_GAIN['ADS1263_ADC2_GAIN_1'], ADS1263_ADC2_DRATE[Rate2])
+        return 0
+
         
     # Read ADC data
     def ADS1263_Read_ADC_Data(self):
         config.digital_write(self.cs_pin, GPIO.LOW)#cs  0
         while(1):
             config.spi_writebyte([ADS1263_CMD['CMD_RDATA1']])
-            config.delay_ms(10)
+            # config.delay_ms(10)
             if(config.spi_readbytes(1)[0] & 0x40 != 0):
                 break
         buf = config.spi_readbytes(5)
@@ -388,7 +408,7 @@ class ADS1263:
         config.digital_write(self.cs_pin, GPIO.LOW)#cs  0
         while(1):
             config.spi_writebyte([ADS1263_CMD['CMD_RDATA2']])
-            config.delay_ms(10)
+            # config.delay_ms(10)
             if(config.spi_readbytes(1)[0] & 0x80 != 0):
                 break
         buf = config.spi_readbytes(5)
@@ -408,18 +428,18 @@ class ADS1263:
             if(Channel>10):
                 return 0
             self.ADS1263_SetChannal(Channel)
-            config.delay_ms(2)
-            self.ADS1263_WriteCmd(ADS1263_CMD['CMD_START1'])
-            config.delay_ms(2)
+            # config.delay_ms(2)
+            # self.ADS1263_WriteCmd(ADS1263_CMD['CMD_START1'])
+            # config.delay_ms(2)
             self.ADS1263_WaitDRDY()
             Value = self.ADS1263_Read_ADC_Data()
         else:
             if(Channel>4):
                 return 0
             self.ADS1263_SetDiffChannal(Channel)
-            config.delay_ms(2) 
-            self.ADS1263_WriteCmd(ADS1263_CMD['CMD_START1'])
-            config.delay_ms(2) 
+            # config.delay_ms(2) 
+            # self.ADS1263_WriteCmd(ADS1263_CMD['CMD_START1'])
+            # config.delay_ms(2) 
             self.ADS1263_WaitDRDY()
             Value = self.ADS1263_Read_ADC_Data()
         return Value
@@ -431,17 +451,17 @@ class ADS1263:
             if(Channel>10):
                 return 0
             self.ADS1263_SetChannal_ADC2(Channel)
-            config.delay_ms(2)
+            # config.delay_ms(2)
             self.ADS1263_WriteCmd(ADS1263_CMD['CMD_START2'])
-            config.delay_ms(2)
+            # config.delay_ms(2)
             Value = self.ADS1263_Read_ADC2_Data()
         else:
             if(Channel>4):
                 return 0
             self.ADS1263_SetDiffChannal_ADC2(Channel)
-            config.delay_ms(2) 
+            # config.delay_ms(2) 
             self.ADS1263_WriteCmd(ADS1263_CMD['CMD_START2'])
-            config.delay_ms(2) 
+            # config.delay_ms(2) 
             Value = self.ADS1263_Read_AD2C_Data()
         return Value
         
@@ -450,9 +470,9 @@ class ADS1263:
         ADC_Value = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         for i in range(0, 10, 1):
             ADC_Value[i] = self.ADS1263_GetChannalValue(i)
-            self.ADS1263_WriteCmd(ADS1263_CMD['CMD_STOP1'])
-            config.delay_ms(20) 
-        print("--- Read ADC1 value success ---")
+            # self.ADS1263_WriteCmd(ADS1263_CMD['CMD_STOP1'])
+            # config.delay_ms(20) 
+        # print("--- Read ADC1 value success ---")
         return ADC_Value
           
           
@@ -462,7 +482,7 @@ class ADS1263:
             ADC_Value[i] = self.ADS1263_GetChannalValue_ADC2(i)
             self.ADS1263_WriteCmd(ADS1263_CMD['CMD_STOP2'])
             config.delay_ms(20) 
-        print("--- Read ADC2 value success ---")
+        # print("--- Read ADC2 value success ---")
         return ADC_Value
         
         
