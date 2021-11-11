@@ -66,7 +66,7 @@ class RaspberryPi:
         self.GPIO.setup(self.CS_PIN, self.GPIO.OUT)
         
         self.GPIO.setup(self.DRDY_PIN, self.GPIO.IN, pull_up_down=self.GPIO.PUD_UP)
-        self.SPI.max_speed_hz = 200000
+        self.SPI.max_speed_hz = 2000000
         self.SPI.mode = 0b01
         return 0;
 
@@ -110,7 +110,7 @@ class JetsonNano:
         self.GPIO.setup(self.RST_PIN, self.GPIO.OUT)
         self.GPIO.setup(self.CS_PIN, self.GPIO.OUT)
         self.GPIO.setup(self.DRDY_PIN, self.GPIO.IN)
-        self.SPI.max_speed_hz = 200000
+        self.SPI.max_speed_hz = 2000000
         self.SPI.mode = 0b01
         return 0
 

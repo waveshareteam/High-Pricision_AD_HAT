@@ -125,13 +125,13 @@ static void ADS1263_WaitDRDY(void)
 {
 	// printf("ADS1263_WaitDRDY \r\n");
     UDOUBLE i = 0;
-    for(i=0;i<4000000;i++) {
-		// DEV_Delay_ms(1);
-        if(DEV_Digital_Read(DEV_DRDY_PIN) == 0)
-            break;
-    }
-    if(i >= 4000000) {
-       printf("Time Out ...\r\n"); 
+    while(1) {
+		if(DEV_Digital_Read(DEV_DRDY_PIN) == 0)
+			break;
+		if(i >= 4000000) {
+			printf("Time Out ...\r\n"); 
+			break;
+		}
     }	
 	// printf("ADS1263_WaitDRDY Release \r\n");
 }
@@ -231,7 +231,7 @@ function:  Device initialization
 parameter: 
 Info:
 ******************************************************************************/
-UBYTE ADS1263_init(void)
+UBYTE ADS1263_init_ADC1(ADS1263_DRATE rate)
 {
     ADS1263_reset();
     if(ADS1263_ReadChipID() == 1) {
@@ -242,10 +242,22 @@ UBYTE ADS1263_init(void)
         return 1;
     }
 	ADS1263_WriteCmd(CMD_STOP1);
+	ADS1263_ConfigADC1(ADS1263_GAIN_1, rate, ADS1263_DELAY_35us);
+	ADS1263_WriteCmd(CMD_START1);
+    return 0;
+}
+UBYTE ADS1263_init_ADC2(ADS1263_ADC2_DRATE rate)
+{
+    ADS1263_reset();
+    if(ADS1263_ReadChipID() == 1) {
+        printf("ID Read success \r\n");
+    }
+    else {
+        printf("ID Read failed \r\n");
+        return 1;
+    }
 	ADS1263_WriteCmd(CMD_STOP2);
-
-	ADS1263_ConfigADC1(ADS1263_GAIN_1, ADS1263_14400SPS, ADS1263_DELAY_35us);
-	ADS1263_ConfigADC2(ADS1263_ADC2_GAIN_1, ADS1263_ADC2_100SPS, ADS1263_DELAY_35us);
+	ADS1263_ConfigADC2(ADS1263_ADC2_GAIN_1, rate, ADS1263_DELAY_35us);
     return 0;
 }
 
@@ -426,7 +438,7 @@ UDOUBLE ADS1263_GetChannalValue(UBYTE Channel)
         }
         ADS1263_SetChannal(Channel);
 		// DEV_Delay_ms(2);
-        ADS1263_WriteCmd(CMD_START1);
+        // ADS1263_WriteCmd(CMD_START1);
         // DEV_Delay_ms(2);
 		ADS1263_WaitDRDY();
         Value = ADS1263_Read_ADC1_Data();
@@ -436,7 +448,7 @@ UDOUBLE ADS1263_GetChannalValue(UBYTE Channel)
         }
         ADS1263_SetDiffChannal(Channel);
 		// DEV_Delay_ms(2);
-        ADS1263_WriteCmd(CMD_START1);
+        // ADS1263_WriteCmd(CMD_START1);
         // DEV_Delay_ms(2);
 		ADS1263_WaitDRDY();
         Value = ADS1263_Read_ADC1_Data();
@@ -488,10 +500,10 @@ void ADS1263_GetAll(UDOUBLE *ADC_Value)
     UBYTE i;
     for(i = 0; i<10; i++) {
         ADC_Value[i] = ADS1263_GetChannalValue(i);
-		ADS1263_WriteCmd(CMD_STOP1);
+		// ADS1263_WriteCmd(CMD_STOP1);
 		// DEV_Delay_ms(20);
     }
-	printf("----------Read ADC1 value success----------\r\n");
+	// printf("----------Read ADC1 value success----------\r\n");
 }
 
 /******************************************************************************
@@ -508,7 +520,7 @@ void ADS1263_GetAll_ADC2(UDOUBLE *ADC_Value)
 		ADS1263_WriteCmd(CMD_STOP2);
 		// DEV_Delay_ms(20);
     }
-	printf("----------Read ADC2 value success----------\r\n");
+	// printf("----------Read ADC2 value success----------\r\n");
 }
 
 /******************************************************************************
