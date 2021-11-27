@@ -30,8 +30,6 @@
 import config
 import RPi.GPIO as GPIO
 
-ScanMode = 0
-
 # gain
 ADS1263_GAIN = {
     'ADS1263_GAIN_1' : 0,   # GAIN   1
@@ -173,7 +171,7 @@ class ADS1263:
         self.rst_pin = config.RST_PIN
         self.cs_pin = config.CS_PIN
         self.drdy_pin = config.DRDY_PIN
-
+        self.ScanMode = 1
 
     # Hardware reset
     def ADS1263_reset(self):
@@ -236,7 +234,7 @@ class ADS1263:
     
     
     def ADS1263_SetMode(self, Mode):
-        ScanMode = Mode
+        self.ScanMode = Mode
         
         
     #The configuration parameters of ADC, gain and data rate
@@ -424,7 +422,7 @@ class ADS1263:
         
     # Read ADC1 specified channel data
     def ADS1263_GetChannalValue(self, Channel):
-        if(ScanMode == 0):# 0  Single-ended input  8 channel1 Differential input  4 channe 
+        if(self.ScanMode == 0):# 0  Single-ended input  8 channel1 Differential input  4 channe 
             if(Channel>10):
                 return 0
             self.ADS1263_SetChannal(Channel)
@@ -447,7 +445,7 @@ class ADS1263:
 
     # Read ADC2 specified channel data
     def ADS1263_GetChannalValue_ADC2(self, Channel):
-        if(ScanMode == 0):# 0  Single-ended input  8 channel1 Differential input  4 channe 
+        if(self.ScanMode == 0):# 0  Single-ended input  8 channel1 Differential input  4 channe 
             if(Channel>10):
                 return 0
             self.ADS1263_SetChannal_ADC2(Channel)
