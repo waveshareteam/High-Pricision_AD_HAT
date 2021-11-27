@@ -46,7 +46,7 @@ try:
                 if(ADC_Value[i]>>23 ==1):
                     print("ADC2 IN%d = -%lf"%(i, (REF*2 - ADC_Value[i] * REF / 0x800000)))
                 else:
-                    print("ADC2 IN%d = %lf"%(i, (ADC_Value[i] * REF / 0x7fffff)))     # 16bit
+                    print("ADC2 IN%d = %lf"%(i, (ADC_Value[i] * REF / 0x7fffff)))     # 24bit
             print("\33[11A")
 
     elif(TEST_ADC1_RATE):    # rate test
