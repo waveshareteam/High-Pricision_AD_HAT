@@ -30,7 +30,7 @@ try:
     # ADC.ADS1263_DAC_Test(0, 1)      # Open IN7
     
     if(TEST_ADC1):       # ADC1 Test
-        channelList = [0, 1, 2, 3, 4, 5]  # The channel must be less than 10
+        channelList = [0, 1, 2, 3, 4]  # The channel must be less than 10
         while(1):
             ADC_Value = ADC.ADS1263_GetAll(channelList)    # get ADC1 value
             for i in channelList:
