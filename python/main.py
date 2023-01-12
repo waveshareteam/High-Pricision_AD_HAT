@@ -60,20 +60,20 @@ try:
         if isSingleChannel:
             while(1):
                 ADC_Value.append(ADC.ADS1263_GetChannalValue(0))
-                if len(ADC_Value) == 10000:
+                if len(ADC_Value) == 5000:
                     time_end = time.time()
                     print(time_start, time_end)
                     print(time_end - time_start)
-                    print('frequency = ', 10000 / (time_end - time_start))
+                    print('frequency = ', 5000 / (time_end - time_start))
                     break
         else:
             while(1):
-                ADC_Value.append(ADC.ADS1263_GetAll())
-                if len(ADC_Value) == 1000:
+                ADC_Value.append(ADC.ADS1263_GetChannalValue(0))
+                if len(ADC_Value) == 5000:
                     time_end = time.time()
                     print(time_start, time_end)
                     print(time_end - time_start)
-                    print('frequency = ', 10000 / (time_end - time_start))
+                    print('frequency = ', 5000 / (time_end - time_start))
                     break
 
     elif(TEST_RTD):     # RTD Test

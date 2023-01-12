@@ -6,13 +6,13 @@
 #include <string.h>
 
 // ADC1 test part
-#define TEST_ADC1       1       
+#define TEST_ADC1       1
 // ADC1 rate test par
-#define TEST_ADC1_RATE  0       
+#define TEST_ADC1_RATE  0
 // ADC2 test part
-#define TEST_ADC2       0   
+#define TEST_ADC2       0
 // RTD test part    
-#define TEST_RTD        0       
+#define TEST_RTD        0
 
 #define REF         5.08        //Modify according to actual voltage
                                 //external AVDD and AVSS(Default), or internal 2.5V
@@ -107,8 +107,8 @@ int main(void)
 
         }
         else {
-            for(i=0; i<1000; i++) {
-                // ADS1263_GetAll(ADC);
+            for(i=0; i<10000; i++) {
+                ADS1263_GetChannalValue(0);
             }
             clock_gettime(CLOCK_REALTIME, &finish);
             time =  (double)(finish.tv_sec-start.tv_sec)*1000.0 + (double)(finish.tv_nsec-start.tv_nsec)/1000000.0;
