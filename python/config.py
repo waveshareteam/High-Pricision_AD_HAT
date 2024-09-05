@@ -74,6 +74,7 @@ class RaspberryPi:
         self.SPI.close()
         self.GPIO.output(self.RST_PIN, 0)
         self.GPIO.output(self.CS_PIN, 0)
+        self.GPIO.cleanup()
         
         
 class JetsonNano:
@@ -120,8 +121,10 @@ class JetsonNano:
 
         self.GPIO.cleanup()
         
+hostname = os.popen("uname -n").read().strip()
         
-if os.path.exists('/sys/bus/platform/drivers/gpiomem-bcm2835'):
+#if os.path.exists('/sys/bus/platform/drivers/gpiomem-bcm2835'):
+if hostname == "raspberrypi":
     implementation = RaspberryPi()
 else:
     implementation = JetsonNano()
